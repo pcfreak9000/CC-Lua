@@ -28,7 +28,7 @@ function listPermissions(group)
 end
 
 function printPermissions(group)
-    local g = listPermissionsgroup)
+    local g = listPermissions(group)
     if g ~= nil then
         print("Permissions of the group "..group)
         for k,v in pairs(g) do
