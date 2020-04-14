@@ -36,7 +36,11 @@ function readAllFromFile(filename)
 end
 
 function readTableFromFile(filename)
-	return textutils.unserialise(readAllFromFile(filename))
+    local read = readAllFromFile(filename)
+    if read == nil then
+        return nil
+    end
+	return textutils.unserialise(read)
 end
 
 function writeAllToFile(filename, data)
