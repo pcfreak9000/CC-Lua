@@ -23,3 +23,28 @@ function tableRemoveElement(ptable, element)
         end
     end
 end
+
+function readAllFromFile(filename)
+	if (fs.exists(filename)) then
+		local f = fs.open(filename, "r")
+		local all = f.readAll()
+		f.close()
+		return all
+	else
+		return nil
+	end
+end
+
+function readTableFromFile(filename)
+	return textutils.unserialise(readAllFromFile(filename))
+end
+
+function writeAllToFile(filename, data)
+	local f = fs.open(filename, "w")
+	f.write(data)
+	f.close()
+end
+
+function writeTableToFile(filename, table_)
+	writeAllToFile(filename, textutils.serialise(table_))
+end
