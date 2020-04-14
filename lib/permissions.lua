@@ -3,6 +3,16 @@ local groupMemberships = {}
 
 os.loadAPI("lib/util.lua")
 
+function serialize(fileprefix)
+    util.writeTableToFile(fileprefix.."_groups", groups)
+    util.writeTableToFile(fileprefix.."_gMembers", groupMemberships)
+end
+
+function deserialize(fileprefix)
+    groups = util.readTableFromFile(fileprefix.."_groups") or {}
+    groupMemberships = util.readTableFromFile(fileprefix.."_gMembers") or {}
+end
+
 function hasPermission(id, perm)
     if groupMemberships[id] ~= nil then
         local grs = groupMemberships[id]
