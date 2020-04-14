@@ -64,12 +64,16 @@ function printGroups(id)
         print("The member "..id.." has no groups.")
     end
 end
+
 function hasPermission(id, perm)
     if groupMemberships[id] ~= nil then
         local grs = groupMemberships[id]
         for k,v in pairs(grs) do
             local grt = groups[v]
-            return util.tableContains(perm, grt)
+            local result = util.tableContains(grt, perm)
+            if result then
+                return true
+            end
         end
     end
     return false
@@ -79,7 +83,9 @@ function addPermission(group, perm)
     if groups[group] == nil then
         groups[group] = {}
     end
-    table.insert(groups[group], perm)
+    if not util.tableContains(groups[group], perm) then
+        table.insert(groups[group], perm)
+    end
 end
 
 function removePermission(group, perm)
@@ -93,7 +99,9 @@ function addMembership(group, id)
     if groupMemberships[id] == nil then
         groupMemberships[id] = {}
     end
-    table.insert(groupMemberships[id], group)
+    if not util.tableContains(groupMemberships[id], group) then
+        table.insert(groupMemberships[id], group)
+    end
 end
 
 function removeMembership(group, id)

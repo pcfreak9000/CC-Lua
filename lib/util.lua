@@ -6,7 +6,7 @@ function invertTable(table)
     return result
 end
 
-function tableContains(element, table)
+function tableContains(table, element)
     for k,v in pairs(table) do
         if v == element then
             return true
