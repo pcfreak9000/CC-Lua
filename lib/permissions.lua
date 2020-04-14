@@ -30,24 +30,24 @@ end
 function printPermissions(group)
     local g = listPermissions(group)
     if g ~= nil then
-        print("Permissions of the group "..group)
+        print("Permissions of the group "..group..":")
         for k,v in pairs(g) do
-            print(v)
+            print(" "..v)
         end
     else
-        print("The group "..group.." has no permissions")
+        print("The group "..group.." has no permissions.")
     end
 end
 
 function printGroups(id)
     local g = listGroups(id)
     if g ~= nil then
-        print("Groups of the member "..id)
+        print("Groups of the member "..id..":")
         for k,v in pairs(g) do
-            print(v)
+            print(" "..v)
         end
     else
-        print("The member "..id.." has no groups")
+        print("The member "..id.." has no groups.")
     end
 end
 function hasPermission(id, perm)
