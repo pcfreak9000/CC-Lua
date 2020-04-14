@@ -13,6 +13,43 @@ function deserialize(fileprefix)
     groupMemberships = util.readTableFromFile(fileprefix.."_gMembers") or {}
 end
 
+function listGroups(id)
+    if groupMemberships[id] ~= nil then
+        return groupMemberships[id]
+    end
+    return nil
+end
+
+function listPermissions(group)
+    if groups[group] ~= nil then
+        return groups[group]
+    end
+    return nil
+end
+
+function printPermissions(group)
+    local g = listPermissionsgroup)
+    if g ~= nil then
+        print("Permissions of the group "..group)
+        for k,v in pairs(g) do
+            print(v)
+        end
+    else
+        print("The group "..group.." has no permissions")
+    end
+end
+
+function printGroups(id)
+    local g = listGroups(id)
+    if g ~= nil then
+        print("Groups of the member "..id)
+        for k,v in pairs(g) do
+            print(v)
+        end
+    else
+        print("The member "..id.." has no groups")
+    end
+end
 function hasPermission(id, perm)
     if groupMemberships[id] ~= nil then
         local grs = groupMemberships[id]
