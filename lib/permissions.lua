@@ -31,19 +31,19 @@ function listGroups(id)
     if groupMemberships[id] ~= nil then
         return groupMemberships[id]
     end
-    return nil
+    return {}
 end
 
 function listPermissions(group)
     if groups[group] ~= nil then
         return groups[group]
     end
-    return nil
+    return {}
 end
 
 function printPermissions(group)
     local g = listPermissions(group)
-    if g ~= nil then
+    if #g > 0 then
         print("Permissions of the group "..group..":")
         for k,v in pairs(g) do
             print(" "..v)
@@ -55,7 +55,7 @@ end
 
 function printGroups(id)
     local g = listGroups(id)
-    if g ~= nil then
+    if #g > 0 then
         print("Groups of the member "..id..":")
         for k,v in pairs(g) do
             print(" "..v)
