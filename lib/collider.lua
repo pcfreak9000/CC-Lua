@@ -9,7 +9,7 @@ local colliderPrefab = {
                 return true
             end
             return false
-        elseif self.colType == type_rect then
+        elseif self.colType == type_box then
             if vec.x <= math.max(self.p1.x, self.p2.x) and vec.x >= math.min(self.p1.x,self.p2.x) then
                 if vec.y <= math.max(self.p1.y, self.p2.y) and vec.y >= math.min(self.p1.y,self.p2.y) then
                     if vec.z <= math.max(self.p1.z, self.p2.z) and vec.z >= math.min(self.p1.z,self.p2.z) then
