@@ -1,11 +1,17 @@
 local groups = {}
 local groupMemberships = {}
+local filename_suffix_groups = "_groups"
+local filename_suffic_groupMemberships = "_gMembers"
 
 os.loadAPI("lib/util.lua")
 
 function serialize(fileprefix)
-    util.writeTableToFile(fileprefix.."_groups", groups)
-    util.writeTableToFile(fileprefix.."_gMembers", groupMemberships)
+    local fg = fileprefix..filename_suffix_groups
+    local fgm = fileprefix..filename_suffic_groupMemberships
+    fs.delete(fg)
+    fs.delete(fgm)
+    util.writeTableToFile(fg, groups)
+    util.writeTableToFile(fgm, groupMemberships)
 end
 
 function deserialize(fileprefix)
