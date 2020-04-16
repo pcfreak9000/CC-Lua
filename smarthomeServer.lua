@@ -56,7 +56,7 @@ local function triggerEvent(colName, evType, player, pos)
         for i,data in pairs(handlers) do
             local permission = data.perm
             if permission == nil or permissions.hasPermission(player, permission) then
-                shell.run(data.prog, evType, data.ui, player, pos)
+                shell.run(data.prog, evType.."", data.ui.."", player.."", pos.."")
             end
         end
     end
