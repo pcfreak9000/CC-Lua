@@ -54,7 +54,7 @@ local function handleCommand(sid, msg, ptc)
             return {code=2, ans=nil}
         end
         if msg[1] == "ping" then
-            return {code=3 ans="pong"}
+            return {code=3, ans="pong"}
         end
     else
     
@@ -132,12 +132,14 @@ registerHandler("door1", "doors", nil, nil)
 --TestEnd
 
 print("Starting smarthome server...")
- 
+resetTimer(0.5)
+rednet.open(rednetSide)
+print("Started.")
 while running do
-    if not rednet.isOpen(rednetSide) then
+    if rednet.isOpen(rednetSide) == false then
         rednet.open(rednetSide)
         resetTimer(0.1)
-        print("Started,")
+        print("Reopened rednet connection.")
     end
    	local event, p1, p2, p3, p4, p5 = os.pullEvent()
     if event == "timer" and p1 == timer then
