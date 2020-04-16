@@ -12,13 +12,13 @@ function serialize(fileprefix)
     local fgm = fileprefix..filename_suffic_groupMemberships
     util.writeTableToFile(fg, groups)
     util.writeTableToFile(fgm, groupMemberships)
-    clearGroups()
-    clearMemberships()
+--    clearGroups()
+--    clearMemberships()
 end
 
 function deserialize(fileprefix)
-    groups = util.readTableFromFile(fileprefix.."_groups") or {}
-    groupMemberships = util.readTableFromFile(fileprefix.."_gMembers") or {}
+    groups = util.readTableFromFile(fileprefix..filename_suffix_groups) or {}
+    groupMemberships = util.readTableFromFile(fileprefix..filename_suffic_groupMemberships) or {}
 end
 
 function clearGroups()

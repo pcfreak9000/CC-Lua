@@ -2,6 +2,7 @@
 os.loadAPI("lib/tracking.lua")
 os.loadAPI("lib/collider.lua")
 os.loadAPI("lib/util.lua")
+os.loadAPI("lib/permissions.lua")
 tracking.setSensorDistance(4)
 tracking.setPositionOfCenter(2831, 94, -255)
 tracking.setSensorLocation("center", "bottom")
@@ -22,9 +23,15 @@ local registeredColliders = {}
 --key=colName, value={key=index, value=player}
 local occupiedColliders = {}
 
---key=colName, value={key=index, value={prog, ui}}
+--key=colName, value={key=index, value={prog, ui, perm}}
 local registeredHandlers = {}
 
+
+local function serialize(fileNamePrefix)
+    util.writeTableToFile(fileNamePrefix.."_colliders", registeredColliders)
+    util.writeTableToFile(fileNamePrefix.."_handlers", registeredHandlers)
+    permissions.serialize(fileNamePrefix)
+end
 
 local function handleCommand(sid, msg, ptc)
     --TODO actions
@@ -66,8 +73,8 @@ local function resetTimer(time)
     timer = os.startTimer(time)
 end
 
-function registerHandler(colName, program, uniqueInfo)
-    local data = {prog=program, ui=uniqueInfo}
+function registerHandler(colName, program, uniqueInfo, permission)
+    local data = {prog=program, ui=uniqueInfo, perm=permission}
     if registeredHandlers[colName] == nil then
         registeredHandlers[colName] = {}
     end
