@@ -122,7 +122,7 @@ local function handleCommand(sid, msg, ptc)
             return {code=3, ans=result}
         end
     elseif msg[1] == "help" then
-        return {code=3 ans=helpString}
+        return {code=3, ans=helpString}
     end
     return {code=4}
 end
