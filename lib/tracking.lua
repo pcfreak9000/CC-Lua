@@ -28,7 +28,7 @@ local function getPlayersInRange(scanRange)
         end
     end
     for k,v in pairs(players) do
-        if not v == sensorAmount then
+        if v ~= sensorAmount then
            players[k] = nil
         end
     end
