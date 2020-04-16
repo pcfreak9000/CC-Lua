@@ -1,5 +1,7 @@
 local groups = {}
 local groupMemberships = {}
+local defaultGroup = nil
+
 local filename_suffix_groups = "_groups"
 local filename_suffic_groupMemberships = "_gMembers"
 
@@ -25,6 +27,10 @@ end
 
 function clearMemberships()
     groupMemberships = {}
+end
+
+function setDefaultGroup(group)
+    defaultGroup = group
 end
 
 function listGroups(id)
@@ -75,6 +81,9 @@ function hasPermission(id, perm)
                 return true
             end
         end
+    end
+    if defaultGroup ~= nil and groups[defaultGroup] ~= name then
+        return util.tableContains(groups[defaultGroup], perm)
     end
     return false
 end
