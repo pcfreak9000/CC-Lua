@@ -95,18 +95,18 @@ local function handleCommand(sid, msg, ptc)
         else
             local range = tonumber(msg[2])
             local allPlayers = tracking.getAllPlayers()
-            local result = "Notice: These results concern the overworld only!\n"
+            local result = "Players in other dimenions are out of range.\n"
             if msg[1] == "pos" or msg[1] == "position" then
                 local ppos = tracking.getPlayerPositions(range)
                 for k,v in pairs(ppos) do
                     result = result..k..": "..v.x.." "..v.y.." "..v.z.."\n"
                     util.tableRemoveElement(allPlayers, k)
                 end
-
             elseif msg[1] == "homedist" or msg[1] "homedistance" then
                 local ppos = tracking.getPlayerDistances(range)
                 for k,v in pairs(ppos) do
                     result = result..k..": "..v.."\n"
+                    util.tableRemoveElement(allPlayers, k)
                 end
             else
                 return {code=4}
