@@ -114,6 +114,6 @@ function printPlayerPositions(scanRange)
     end
 end
 
-function getAllPlayers()
-    return peris.center.getAllPlayers()
+function getAllPlayers(limitToCurrentWorld)
+    return peris.center.getAllPlayers(limitToCurrentWorld)
 end

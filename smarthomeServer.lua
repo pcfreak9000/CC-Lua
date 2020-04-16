@@ -74,7 +74,7 @@ local function handleCommand(sid, msg, ptc)
             return {code=3, ans="pong"}
         elseif msg[1] == "reboot" then
             running = 2
-            return {code=3, ans="Initiated remote reboot..."}
+            return {code=3, ans="Initiating remote reboot..."}
         elseif msg[1] == "shutdown" then
             --running = 3
             return {code=3, ans="Error: The requested operation is not supported!"}
@@ -91,7 +91,7 @@ local function handleCommand(sid, msg, ptc)
             return {code=2}
         else
             local range = tonumber(msg[2])
-            local allPlayers = tracking.getAllPlayers()
+            local allPlayers = tracking.getAllPlayers(false)
             local result = "Players in other dimenions are also out of range.\n"
             if msg[1] == "pos" or msg[1] == "position" then
                 local ppos = tracking.getPlayerPositions(range)
