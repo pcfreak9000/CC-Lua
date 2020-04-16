@@ -19,7 +19,7 @@ datafileprefix = "data/sms"
 
 --Events: activated, deactivated, oactivated, odeactivated, orevoke
 
-local helpString = "server\n ping\n stop\n remote\n  reboot\n  shutdown\ntrack\n pos/position\n    <range-number>\n homedist/homedistance\n    <range-number>\nhelp"
+local helpString = "server\n ping\n stop\n reboot\n shutdown\ntrack\n pos/position\n    <range-number>\n homedist/homedistance\n    <range-number>\nhelp"
 
 --key=colName, value=collider
 local registeredColliders = {}
@@ -72,17 +72,12 @@ local function handleCommand(sid, msg, ptc)
             return {code=2}
         elseif msg[1] == "ping" then
             return {code=3, ans="pong"}
-        elseif msg[1] == "remote" then
-            table.remove(msg, 1)
-            if #msg == 0 then
-                return {code=2}
-            elseif msg[1] == "reboot" then
-                running = 2
-                return {code=3, ans="Initiated remote reboot..."}
-            elseif msg[1] == "shutdown" then
-                running = 3
-                return {code=3, ans="Initiated remote shutdown..."}
-            end
+        elseif msg[1] == "reboot" then
+            running = 2
+            return {code=3, ans="Initiated remote reboot..."}
+        elseif msg[1] == "shutdown" then
+            --running = 3
+            return {code=3, ans="Error: The requested operation is not supported!"}
         elseif msg[1] == "stop" then
             print("Remote server-stop initiated by SID "..sid)
             running = 0
@@ -179,6 +174,7 @@ print("Starting smarthome server...")
 resetTimer(0.5)
 rednet.open(rednetSide)
 print("Started.")
+local errcount = 0
 while running == 1 do
     if rednet.isOpen(rednetSide) == false then
         rednet.open(rednetSide)
@@ -187,7 +183,16 @@ while running == 1 do
     end
    	local event, p1, p2, p3, p4, p5 = os.pullEvent()
     if event == "timer" and p1 == timer then
-        handleRecurring()
+        local ok, err = pcall(handleRecurring)
+        if not ok then
+            print("Error in handleRecurring() detected")
+            errcount = errcount + 1
+        else
+            errcount = math.max(0, errcount - 1)
+        end
+        if errcount >= 3 then
+            error("3 errors in a row in handleRecurring(): "..err)
+        end
         resetTimer(0.05)
 	elseif event == "rednet_message" then
         local sid = p1
@@ -207,12 +212,17 @@ while running == 1 do
                 rednet.send(sid, {responsecode = 2}, protocol)
             else
                 print("SID "..sid.." made a request!")
-                local ans = handleCommand(sid, msg, ptc)
-                local repc = ans.code
-                if ans.ans ~= nil and repc == 0 then
-                    repc = 3
+                local ok, ans = pcall(handleCommand(sid, msg, ptc))
+                if ok then
+                    local repc = ans.code
+                    if ans.ans ~= nil and repc == 0 then
+                        repc = 3
+                    end
+                    rednet.send(sid, {responsecode = repc, answer = ans.ans}, protocol)
+                else
+                    print("Error in handleCommand() detected: "..ans)
+                    rednet.send(sid, {responsecode = 5}, protocol)
                 end
-                rednet.send(sid, {responsecode = repc, answer = ans.ans}, protocol)
             end
         end
     end
