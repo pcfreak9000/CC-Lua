@@ -83,7 +83,7 @@ local function handleCommand(sid, msg, ptc)
                 return {code=3, ans="Initiated remote reboot..."}
             elseif msg[1] == "shutdown" then
                 running = 3
-                return {code=3, ans="Initiated remote shutdown...")}
+                return {code=3, ans="Initiated remote shutdown..."}
             end
         end
     elseif msg[1] == "override" then
