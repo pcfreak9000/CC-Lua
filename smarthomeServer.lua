@@ -74,13 +74,20 @@ function registerHandler(colName, program, uniqueInfo)
     table.insert(registeredHandlers[colName], data)
 end
 
-function registerCollider(name, collider)
-    registeredColliders[name] = collider
+function registerCollider(name, coll)
+    registeredColliders[name] = coll
 end
+
+--TestStart
+pos1 = vector.new(2853, 93, -244)
+pos2 = vector.new(2858, 63, -248)
+registerCollider("test1", collider.newBox(pos1,pos2))
+--TestEnd
 
 print("Starting smarthome server...")
 resetTimer(0.5)
 rednet.open(rednetSide)
+print("Continuesly checking colliders and awaiting commands now")
  
 while true do
    	local event, p1, p2, p3, p4, p5 = os.pullEvent()
@@ -113,3 +120,4 @@ while true do
 end
  
 rednet.close(rednetSide)
+print("Stopped this smarthome server")
