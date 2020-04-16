@@ -46,20 +46,37 @@ local function serialize()
     permissions.serialize(datafileprefix)
 end
 
+local function registerHandler(colName, program, uniqueInfo, permission)
+    local data = {prog=program, ui=uniqueInfo, perm=permission or ""}
+    if registeredHandlers[colName] == nil then
+        registeredHandlers[colName] = {}
+    end
+    table.insert(registeredHandlers[colName], data)
+    serialize()
+end
+
+local function registerCollider(name, coll)
+    registeredColliders[name] = coll
+    serialize()
+end
+
 local function handleCommand(sid, msg, ptc)
     --TODO actions
     if msg[1] == "server" then
         table.remove(msg, 1)
         if #msg == 0 then
-            return {code=2, ans=nil}
-        end
-        if msg[1] == "ping" then
+            return {code=2}
+        elseif msg[1] == "ping" then
             return {code=3, ans="pong"}
+        elseif msg[1] == "shutdown" then
+            print("Remote shutdown initiated by "..sid)
+            running = false
+            return {code=0}
         end
     else
     
     end
-    return {code=4, ans=nil}
+    return {code=4}
 end
 
 local function triggerEvent(colName, evType, player, pos)
@@ -110,27 +127,6 @@ local function resetTimer(time)
     timer = os.startTimer(time)
 end
 
-function registerHandler(colName, program, uniqueInfo, permission)
-    local data = {prog=program, ui=uniqueInfo, perm=permission or ""}
-    if registeredHandlers[colName] == nil then
-        registeredHandlers[colName] = {}
-    end
-    table.insert(registeredHandlers[colName], data)
-    serialize()
-end
-
-function registerCollider(name, coll)
-    registeredColliders[name] = coll
-    serialize()
-end
-
---TestStart
-pos1 = vector.new(2841, 94, -256)
-pos2 = vector.new(2843, 96, -259)
-registerCollider("door1", collider.newBox(pos1,pos2))
-registerHandler("door1", "doors", nil, nil)
---TestEnd
-
 print("Starting smarthome server...")
 resetTimer(0.5)
 rednet.open(rednetSide)
@@ -175,4 +171,4 @@ while running do
 end
  
 rednet.close(rednetSide)
-print("Stopped this smarthome server")
+print("Stopped smarthome server")

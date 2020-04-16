@@ -22,7 +22,7 @@ while true do
             print("Code 3 (Answer):")
             print(msg.answer or "No answer.")
         elseif msg.responsecode == 4 then
-            print("Code 4 (Program not found)"
+            print("Code 4 (Program not found)")
         else
             print("Code '"..msg.responsecode.."' (Unknown)")
         end
