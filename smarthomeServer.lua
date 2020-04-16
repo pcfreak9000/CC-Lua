@@ -59,7 +59,7 @@ local function handleCommand(sid, msg, ptc)
     else
     
     end
-    return {code=0, ans=nil}
+    return {code=4, ans=nil}
 end
 
 local function triggerEvent(colName, evType, player, pos)
@@ -165,10 +165,10 @@ while running do
                 print("SID "..sid.." made a request!")
                 local ans = handleCommand(sid, msg, ptc)
                 local repc = ans.code
-                if ans.ans ~= nil then
+                if ans.ans ~= nil and repc == 0 then
                     repc = 3
                 end
-                rednet.send(sid, {responsecode = repc, answer = ans}, protocol)
+                rednet.send(sid, {responsecode = repc, answer = ans.ans}, protocol)
             end
         end
     end
