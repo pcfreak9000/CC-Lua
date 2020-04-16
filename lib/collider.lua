@@ -27,6 +27,10 @@ local colMeta = {
     __index = colliderPrefab
 }
 
+function isInside(col, vec)
+    return colliderPrefab.isInside(col, vec)
+end
+
 newCircle = function(v,r)
     local col = {colType=type_sphere, pos=v, radius=r}
     setmetatable(col, colMeta)

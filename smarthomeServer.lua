@@ -68,7 +68,7 @@ local function handleRecurring()
      for colName, pArray in pairs(occupiedColliders) do
         for k,pl in pairs(pArray) do
             local vec = players[pl]
-            if vec == nil or not registeredColliders[colName]:isInside(vec) then 
+            if vec == nil or not collider.isInside(registeredColliders[colName], vec) then 
                 print("onDeactivate: "..pl)
                 --TODO refine event
                 triggerEvent(colName, "deactivate", pl, vec)
@@ -83,7 +83,7 @@ local function handleRecurring()
             if occupiedColliders[colName] ~= nil then
                 freshJoined = not util.tableContains(occupiedColliders[colName], k)
             end
-            if freshJoined and col:isInside(ve) then
+            if freshJoined and collider.isInside(col, ve) then
                 print("onActivate: "..k)
                 --TODO refine event
                 triggerEvent(colName, "activate", k, ve)
