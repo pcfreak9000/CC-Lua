@@ -19,7 +19,7 @@ datafileprefix = "data/sms"
 
 --Events: activated, deactivated, oactivated, odeactivated, orevoke
 
-local helpString = "server\n ping\n stop\n remote\n  reboot\n  shutdown\ntrack\n pos/position <range-number>\n homedist/homedistance <range-number>\nhelp"
+local helpString = "server\n ping\n stop\n remote\n  reboot\n  shutdown\ntrack\n pos/position\n    <range-number>\n homedist/homedistance\n    <range-number>\nhelp"
 
 --key=colName, value=collider
 local registeredColliders = {}
@@ -97,7 +97,7 @@ local function handleCommand(sid, msg, ptc)
         else
             local range = tonumber(msg[2])
             local allPlayers = tracking.getAllPlayers()
-            local result = "Players in other dimenions are out of range.\n"
+            local result = "Players in other dimenions are also out of range.\n"
             if msg[1] == "pos" or msg[1] == "position" then
                 local ppos = tracking.getPlayerPositions(range)
                 for k,v in pairs(ppos) do
