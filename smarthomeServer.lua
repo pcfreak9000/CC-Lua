@@ -212,7 +212,7 @@ while running == 1 do
                 rednet.send(sid, {responsecode = 2}, protocol)
             else
                 print("SID "..sid.." made a request!")
-                local ok, ans = pcall(handleCommand(sid, msg, ptc))
+                local ok, ans = pcall(handleCommand, sid, msg, ptc)
                 if ok then
                     local repc = ans.code
                     if ans.ans ~= nil and repc == 0 then

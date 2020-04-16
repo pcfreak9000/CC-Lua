@@ -21,7 +21,7 @@ if sid == serverId and ptc == protocol then
         print(msg.answer or "No answer.")
     elseif msg.responsecode == 4 then
         print("Code 4 (Program not found)")
-    elseif ms.responsecode == 5 then
+    elseif msg.responsecode == 5 then
         print("Code 5 (Error while executing)")
     else
         print("Code '"..msg.responsecode.."' (Unknown)")
