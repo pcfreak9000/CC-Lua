@@ -18,6 +18,9 @@ while true do
             print("Server responded with code 1 (Access denied)")
         elseif msg.responsecode == 2 then
             print("Server responded with code 2 (Not enough arguments)")
+        elseif msg.responsecode == 3 then
+            print("Server responded with code 3 (Answer):")
+            print(msg.answer or "No answer.")
         end
         break
     end

@@ -48,6 +48,18 @@ end
 
 local function handleCommand(sid, msg, ptc)
     --TODO actions
+    if msg[1] == "server" then
+        table.remove(msg, 1)
+        if #msg == 0 then
+            return {code=2, ans=nil}
+        end
+        if msg[1] == "ping" then
+            return {code=3 ans="pong"}
+        end
+    else
+    
+    end
+    return {code=0, ans=nil}
 end
 
 local function triggerEvent(colName, evType, player, pos)
@@ -55,8 +67,8 @@ local function triggerEvent(colName, evType, player, pos)
     if handlers ~= nil then
         for i,data in pairs(handlers) do
             local permission = data.perm
-            if permission == nil or permissions.hasPermission(player, permission) then
-                shell.run(data.prog, evType, data.ui or "", player.."", pos.x.." "..pos.y.." "..pos.z)
+            if permission == "" or permissions.hasPermission(player, permission) then
+                shell.run(data.prog, evType, data.ui or "", player or "", pos.x.." "..pos.y.." "..pos.z)
             end
         end
     end
@@ -69,7 +81,6 @@ local function handleRecurring()
         for k,pl in pairs(pArray) do
             local vec = players[pl]
             if vec == nil or not collider.isInside(registeredColliders[colName], vec) then 
-                print("onDeactivate: "..pl)
                 --TODO refine event
                 triggerEvent(colName, "deactivate", pl, vec)
                 table.remove(pArray, k)
@@ -84,7 +95,6 @@ local function handleRecurring()
                 freshJoined = not util.tableContains(occupiedColliders[colName], k)
             end
             if freshJoined and collider.isInside(col, ve) then
-                print("onActivate: "..k)
                 --TODO refine event
                 triggerEvent(colName, "activate", k, ve)
                 if occupiedColliders[colName] == nil then
@@ -101,7 +111,7 @@ local function resetTimer(time)
 end
 
 function registerHandler(colName, program, uniqueInfo, permission)
-    local data = {prog=program, ui=uniqueInfo, perm=permission}
+    local data = {prog=program, ui=uniqueInfo, perm=permission or ""}
     if registeredHandlers[colName] == nil then
         registeredHandlers[colName] = {}
     end
@@ -122,11 +132,13 @@ registerHandler("door1", "doors", nil, nil)
 --TestEnd
 
 print("Starting smarthome server...")
-resetTimer(0.5)
-rednet.open(rednetSide)
-print("Continuesly checking colliders and awaiting commands now")
  
 while running do
+    if not rednet.isOpen(rednetSide) then
+        rednet.open(rednetSide)
+        resetTimer(0.1)
+        print("Started,")
+    end
    	local event, p1, p2, p3, p4, p5 = os.pullEvent()
     if event == "timer" and p1 == timer then
         handleRecurring()
@@ -149,8 +161,12 @@ while running do
                 rednet.send(sid, {responsecode = 2}, protocol)
             else
                 print("SID "..sid.." made a request!")
-                handleCommand(sid, msg, ptc)
-                rednet.send(sid, {responsecode = 0}, protocol)
+                local ans = handleCommand(sid, msg, ptc)
+                local repc = ans.code
+                if ans.ans ~= nil then
+                    repc = 3
+                end
+                rednet.send(sid, {responsecode = repc, answer = ans}, protocol)
             end
         end
     end
