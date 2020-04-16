@@ -88,27 +88,36 @@ local function handleCommand(sid, msg, ptc)
         end
     elseif msg[1] == "override" then
         --TODO override
-    elseif msg[1] == "trackPlayers" then
+    elseif msg[1] == "track" then
         table.remove(msg, 1)
         if #msg <= 1 then
             return {code=2}
         else
             local range = tonumber(msg[2])
+            local allPlayers = tracking.getAllPlayers()
+            local result = "Notice: These results concern the overworld only!\n"
             if msg[1] == "pos" or msg[1] == "position" then
                 local ppos = tracking.getPlayerPositions(range)
-                local result = ""
                 for k,v in pairs(ppos) do
-                    result = result.."\n"..k..": "..v.x.." "..v.y.." "..v.z
+                    result = result..k..": "..v.x.." "..v.y.." "..v.z.."\n"
+                    util.tableRemoveElement(allPlayers, k)
                 end
-                return {code=3, ans=result}
+
             elseif msg[1] == "homedist" or msg[1] "homedistance" then
                 local ppos = tracking.getPlayerDistances(range)
-                local result = ""
                 for k,v in pairs(ppos) do
-                    result = result.."\n"..k..": "..v
+                    result = result..k..": "..v.."\n"
                 end
-                return {code=3, ans=result}
+            else
+                return {code=4}
             end
+            if #allPlayers > 0 then
+                result = result.."Out of range:\n"
+                for k,v in pairs(allPlayers) do
+                    result = result..v.."\n"
+                end
+            end
+            return {code=3, ans=result}
         end
     end
     return {code=4}

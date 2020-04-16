@@ -92,7 +92,7 @@ end
  
 function getPlayerDistances(scanRange)
     local pe = peris.center
-    local tab = pe.getNearbyPlayers(scaneRange)
+    local tab = pe.getNearbyPlayers(scanRange)
     local result = {}
     for k,v in pairs(tab) do
         result[v.player] = v.distance
@@ -112,4 +112,8 @@ function printPlayerPositions(scanRange)
     for k,v in pairs(oink) do
         print(k..": "..v.x.." "..v.y.." "..v.z)
     end
+end
+
+function getAllPlayers()
+    return peris.center.getAllPlayers()
 end
