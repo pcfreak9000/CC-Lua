@@ -74,10 +74,6 @@ local function handleCommand(sid, msg, ptc)
             table.remove(msg, 1)
             if #msg == 0 then
                 return {code=2}
-            elseif msg[1] == "stop" then
-                print("Remote server-stop initiated by SID "..sid)
-                running = 0
-                return {code=3, ans="Initiated remote server-stop..."}
             elseif msg[1] == "reboot" then
                 running = 2
                 return {code=3, ans="Initiated remote reboot..."}
@@ -85,9 +81,35 @@ local function handleCommand(sid, msg, ptc)
                 running = 3
                 return {code=3, ans="Initiated remote shutdown..."}
             end
+        elseif msg[1] == "stop" then
+            print("Remote server-stop initiated by SID "..sid)
+            running = 0
+            return {code=3, ans="Initiated server-stop..."}
         end
     elseif msg[1] == "override" then
         --TODO override
+    elseif msg[1] == "trackPlayers" then
+        table.remove(msg, 1)
+        if #msg <= 1 then
+            return {code=2}
+        else
+            local range = tonumber(msg[2])
+            if msg[1] == "pos" or msg[1] == "position" then
+                local ppos = tracking.getPlayerPositions(range)
+                local result = ""
+                for k,v in pairs(ppos) do
+                    result = result.."\n"..k..": "..v.x.." "..v.y.." "..v.z
+                end
+                return {code=3, ans=result}
+            elseif msg[1] == "homedist" or msg[1] "homedistance" then
+                local ppos = tracking.getPlayerDistances(range)
+                local result = ""
+                for k,v in pairs(ppos) do
+                    result = result.."\n"..k..": "..v
+                end
+                return {code=3, ans=result}
+            end
+        end
     end
     return {code=4}
 end
