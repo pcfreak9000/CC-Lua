@@ -17,6 +17,8 @@ positionsRange = 1000
 datafileprefix = "data/sms"
 --Configuration above
 
+--Events: activated, deactivated, oactivated, odeactivated, orevoke
+
 --key=colName, value=collider
 local registeredColliders = {}
 
@@ -26,7 +28,7 @@ local occupiedColliders = {}
 --key=colName, value={key=index, value={prog, ui, perm}}
 local registeredHandlers = {}
 
-local running = true
+local running = 1
 
 local function deserialize()
     registeredColliders = util.readTableFromFile(datafileprefix.."_colliders") or {}
@@ -68,13 +70,24 @@ local function handleCommand(sid, msg, ptc)
             return {code=2}
         elseif msg[1] == "ping" then
             return {code=3, ans="pong"}
-        elseif msg[1] == "shutdown" then
-            print("Remote shutdown initiated by "..sid)
-            running = false
-            return {code=0}
+        elseif msg[1] == "remote" then
+            table.remove(msg, 1)
+            if #msg == 0 then
+                return {code=2}
+            elseif msg[1] == "stop" then
+                print("Remote server-stop initiated by SID "..sid)
+                running = 0
+                return {code=3, ans="Initiated remote server-stop..."}
+            elseif msg[1] == "reboot" then
+                running = 2
+                return {code=3, ans="Initiated remote reboot..."}
+            elseif msg[1] == "shutdown" then
+                running = 3
+                return {code=3, ans="Initiated remote shutdown...")}
+            end
         end
-    else
-    
+    elseif msg[1] == "override" then
+        --TODO override
     end
     return {code=4}
 end
@@ -85,7 +98,7 @@ local function triggerEvent(colName, evType, player, pos)
         for i,data in pairs(handlers) do
             local permission = data.perm
             if permission == "" or permissions.hasPermission(player, permission) then
-                shell.run(data.prog, evType, data.ui or "", player or "", pos.x.." "..pos.y.." "..pos.z)
+                shell.run(data.prog, evType, data.ui or "", player or "")
             end
         end
     end
@@ -131,7 +144,7 @@ print("Starting smarthome server...")
 resetTimer(0.5)
 rednet.open(rednetSide)
 print("Started.")
-while running do
+while running == 1 do
     if rednet.isOpen(rednetSide) == false then
         rednet.open(rednetSide)
         resetTimer(0.1)
@@ -172,3 +185,8 @@ end
  
 rednet.close(rednetSide)
 print("Stopped smarthome server")
+if running == 2 then
+    shell.run("reboot")
+elseif running == 3 then
+    shell.run("shutdown")
+end
