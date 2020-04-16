@@ -19,6 +19,8 @@ datafileprefix = "data/sms"
 
 --Events: activated, deactivated, oactivated, odeactivated, orevoke
 
+local helpString = "server\n ping\n stop\n remote\n  reboot\n  shutdown\ntrack\n pos/position <range-number>\n homedist/homedistance <range-number>\nhelp"
+
 --key=colName, value=collider
 local registeredColliders = {}
 
@@ -102,7 +104,7 @@ local function handleCommand(sid, msg, ptc)
                     result = result..k..": "..v.x.." "..v.y.." "..v.z.."\n"
                     util.tableRemoveElement(allPlayers, k)
                 end
-            elseif msg[1] == "homedist" or msg[1] "homedistance" then
+            elseif msg[1] == "homedist" or msg[1] == "homedistance" then
                 local ppos = tracking.getPlayerDistances(range)
                 for k,v in pairs(ppos) do
                     result = result..k..": "..v.."\n"
@@ -119,6 +121,8 @@ local function handleCommand(sid, msg, ptc)
             end
             return {code=3, ans=result}
         end
+    elseif msg[1] == "help" then
+        return {code=3 ans=helpString}
     end
     return {code=4}
 end
