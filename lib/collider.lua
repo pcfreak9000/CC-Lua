@@ -23,6 +23,8 @@ local colliderPrefab = {
     end
 }
 
+--TODO consider removing this metatable stuff (it causes problems with serialization anyways)
+
 local colMeta = {
     __index = colliderPrefab
 }

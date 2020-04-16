@@ -55,7 +55,7 @@ local function triggerEvent(colName, evType, player, pos)
     if handlers ~= nil then
         for i,data in pairs(handlers) do
             local permission = data.perm
-            if permissions.hasPermission(player, permission) then
+            if permission == nil or permissions.hasPermission(player, permission) then
                 shell.run(data.prog, evType, data.ui, player, pos)
             end
         end
@@ -115,9 +115,10 @@ function registerCollider(name, coll)
 end
 
 --TestStart
-pos1 = vector.new(2853, 93, -244)
-pos2 = vector.new(2858, 63, -248)
-registerCollider("test1", collider.newBox(pos1,pos2))
+pos1 = vector.new(2841, 94, -256)
+pos2 = vector.new(2843, 96, -259)
+registerCollider("door1", collider.newBox(pos1,pos2))
+registerHandler("door1", "doors", nil, nil)
 --TestEnd
 
 print("Starting smarthome server...")
