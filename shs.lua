@@ -31,6 +31,7 @@ local occupiedColliders = {}
 --key=colName, value={key=index, value={prog, ui, perm}}
 local registeredHandlers = {}
 
+--key=com, value=perm
 local registeredCommands = {}
 
 local running = 1
@@ -177,6 +178,7 @@ local function handleCommand(sid, msg, ptc)
         else
             shell.run(prog, msg)
         end
+        return {code=0}
     end
     return {code=4}
 end

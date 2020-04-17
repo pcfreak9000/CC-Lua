@@ -21,6 +21,7 @@ function finishp(datafileprefix)
     serialize(datafileprefix)
     registeredHandlers = {}
     registeredColliders = {}
+    registeredCommands = {}
 end
  
 function finish()
