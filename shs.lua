@@ -70,7 +70,7 @@ local function registerCollider(name, coll)
 end
 
 local function registerCommand(com, perm)
-    registeredComands[com] = perm
+    registeredCommands[com] = perm
     serialize()
 end
 

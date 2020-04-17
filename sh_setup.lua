@@ -42,6 +42,6 @@ function registerCollider(name, coll)
 end
 
 function registerCommand(com, perm)
-    registeredComands[com] = perm
+    registeredCommands[com] = perm
     serialize()
 end
