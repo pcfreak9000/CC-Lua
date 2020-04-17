@@ -1,7 +1,5 @@
-os.loadAPI("lib/permissions")
-os.loadAPI("lib/util")
-
-datafileprefix="data/sms"
+os.loadAPI("lib/permissions.lua")
+os.loadAPI("lib/util.lua")
 
 --key=colName, value={key=index, value={prog, ui, perm}}
 local registeredHandlers = {}
@@ -10,14 +8,20 @@ local registeredHandlers = {}
 local registeredColliders = {}
 
 
-local function serialize()
+local function serialize(datafileprefix)
     util.writeTableToFile(datafileprefix.."_colliders", registeredColliders)
     util.writeTableToFile(datafileprefix.."_handlers", registeredHandlers)
     permissions.serialize(datafileprefix)
 end
 
+function finishp(datafileprefix)
+    serialize(datafileprefix)
+    registeredHandlers = {}
+    registeredColliders = {}
+end
+ 
 function finish()
-    serialize()
+    finishp("data/sms")
 end
 
 function registerHandler(colName, program, uniqueInfo, permission)
@@ -34,9 +38,3 @@ function registerCollider(name, coll)
     --serialize()
 end
 
---TestStart
-pos1 = vector.new(2841, 94, -257)
-pos2 = vector.new(2843, 96, -260)
-registerCollider("door1", collider.newBox(pos1,pos2))
-registerHandler("door1", "doors", nil, nil)
---TestEnd
