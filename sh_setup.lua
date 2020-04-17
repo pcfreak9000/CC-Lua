@@ -44,5 +44,5 @@ end
 
 function registerCommand(com, perm)
     registeredCommands[com] = perm
-    serialize()
+    --serialize()
 end
