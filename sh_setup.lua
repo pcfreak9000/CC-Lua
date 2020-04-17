@@ -7,10 +7,13 @@ local registeredHandlers = {}
 --key=colName, value=collider
 local registeredColliders = {}
 
+--key=prog, value=perm
+local registeredCommands = {}
 
 local function serialize(datafileprefix)
     util.writeTableToFile(datafileprefix.."_colliders", registeredColliders)
     util.writeTableToFile(datafileprefix.."_handlers", registeredHandlers)
+    util.writeTableToFile(datafileprefix.."_commands", registeredCommands)
     permissions.serialize(datafileprefix)
 end
 
@@ -38,3 +41,7 @@ function registerCollider(name, coll)
     --serialize()
 end
 
+function registerCommand(com, perm)
+    registeredComands[com] = perm
+    serialize()
+end

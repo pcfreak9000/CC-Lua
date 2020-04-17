@@ -51,6 +51,7 @@ deserialize()
 local function serialize()
     util.writeTableToFile(datafileprefix.."_colliders", registeredColliders)
     util.writeTableToFile(datafileprefix.."_handlers", registeredHandlers)
+    util.writeTableToFile(datafileprefix.."_commands", registeredCommands)
     permissions.serialize(datafileprefix)
 end
 
@@ -65,6 +66,11 @@ end
 
 local function registerCollider(name, coll)
     registeredColliders[name] = coll
+    serialize()
+end
+
+local function registerCommand(com, perm)
+    registeredComands[com] = perm
     serialize()
 end
 
@@ -161,6 +167,10 @@ local function handleCommand(sid, msg, ptc)
             return {code=2}
         end
         local prog = msg[1]
+        if registeredCommands[prog] == nil then
+            return {code=4}
+        end
+        -- with auth, this could actually check permissions
         table.remove(msg, 1)
         if #msg == 0 then
             shell.run(prog)
