@@ -20,7 +20,7 @@ datafileprefix = "data/sms"
 --Events: activate, deactivate, oactivate, odeactivate, orevoke
 -- a, d, oa, od, or
 
-local helpString = "server\n ping\n stop\n reboot\n shutdown\ntrack\n pos/position\n    <range-number>\n homedist/homedistance\n    <range-number>\nhelp"
+local helpString = "server\n ping\n stop\n reboot\n shutdown\ntrack\n pos/position\n    <range-number>\n homedist/homedistance\n    <range-number>\nhelp\noverride <collider>\n    <oa/od/or> [player]"
 
 --key=colName, value=collider
 local registeredColliders = {}
@@ -31,11 +31,14 @@ local occupiedColliders = {}
 --key=colName, value={key=index, value={prog, ui, perm}}
 local registeredHandlers = {}
 
+local registeredCommands = {}
+
 local running = 1
 
 local function deserialize()
     registeredColliders = util.readTableFromFile(datafileprefix.."_colliders") or {}
     registeredHandlers = util.readTableFromFile(datafileprefix.."_handlers") or {}
+    registeredCommands = util.readTableFromFile(datafileprefix.."_commands") or {}
     permissions.deserialize(datafileprefix)
 end
 
@@ -112,7 +115,7 @@ local function handleCommand(sid, msg, ptc)
             else
                 return {code=4}
             end
-            local player = nil
+            local player = "pcfreak9000" --Not nice but there is no auth anyways...
             if #msg >= 3 then
                 player = msg[3]
             end
@@ -152,6 +155,18 @@ local function handleCommand(sid, msg, ptc)
         end
     elseif msg[1] == "help" then
         return {code=3, ans=helpString}
+    elseif msg[1] == "cmd" then
+        table.remove(msg, 1)
+        if #msg == 0 then
+            return {code=2}
+        end
+        local prog = msg[1]
+        table.remove(msg, 1)
+        if #msg == 0 then
+            shell.run(prog)
+        else
+            shell.run(prog, msg)
+        end
     end
     return {code=4}
 end
