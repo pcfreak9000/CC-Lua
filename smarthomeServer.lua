@@ -107,7 +107,7 @@ local function handleCommand(sid, msg, ptc)
                 evType = "oactivate"
             elseif msg[2] == "od" then
                 evType = "odeactivate"
-            else if msg[2] == "or" then
+            elseif msg[2] == "or" then
                 evType = "orevoke"
             else
                 return {code=4}
