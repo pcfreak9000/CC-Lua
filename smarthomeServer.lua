@@ -17,7 +17,8 @@ positionsRange = 1000
 datafileprefix = "data/sms"
 --Configuration above
 
---Events: activated, deactivated, oactivated, odeactivated, orevoke
+--Events: activate, deactivate, oactivate, odeactivate, orevoke
+-- a, d, oa, od, or
 
 local helpString = "server\n ping\n stop\n reboot\n shutdown\ntrack\n pos/position\n    <range-number>\n homedist/homedistance\n    <range-number>\nhelp"
 
@@ -64,6 +65,18 @@ local function registerCollider(name, coll)
     serialize()
 end
 
+local function triggerEvent(colName, evType, player)
+    local handlers = registeredHandlers[colName]
+    if handlers ~= nil then
+        for i,data in pairs(handlers) do
+            local permission = data.perm
+            if permission == "" or permissions.hasPermission(player, permission) then
+                shell.run(data.prog, evType, data.ui or "", player or "unknown")
+            end
+        end
+    end
+end
+
 local function handleCommand(sid, msg, ptc)
     --TODO actions
     if msg[1] == "server" then
@@ -84,7 +97,28 @@ local function handleCommand(sid, msg, ptc)
             return {code=3, ans="Initiated server-stop..."}
         end
     elseif msg[1] == "override" then
-        --TODO override
+        table.remove(msg, 1)
+        if #msg < 2 then
+            return {code=2}
+        else 
+            local colName = msg[1]
+            local evType = ""
+            if msg[2] == "oa" then
+                evType = "oactivate"
+            elseif msg[2] == "od" then
+                evType = "odeactivate"
+            else if msg[2] == "or" then
+                evType = "orevoke"
+            else
+                return {code=4}
+            end
+            local player = nil
+            if #msg >= 3 then
+                player = msg[3]
+            end
+            triggerEvent(colName, evType, player)
+            return {code=0}
+        end
     elseif msg[1] == "track" then
         table.remove(msg, 1)
         if #msg <= 1 then
@@ -92,7 +126,7 @@ local function handleCommand(sid, msg, ptc)
         else
             local range = tonumber(msg[2])
             local allPlayers = tracking.getAllPlayers(false)
-            local result = "Players in other dimenions are also out of range.\n"
+            local result = "Players in other dimensions are also out of range.\n"
             if msg[1] == "pos" or msg[1] == "position" then
                 local ppos = tracking.getPlayerPositions(range)
                 for k,v in pairs(ppos) do
@@ -122,18 +156,6 @@ local function handleCommand(sid, msg, ptc)
     return {code=4}
 end
 
-local function triggerEvent(colName, evType, player, pos)
-    local handlers = registeredHandlers[colName]
-    if handlers ~= nil then
-        for i,data in pairs(handlers) do
-            local permission = data.perm
-            if permission == "" or permissions.hasPermission(player, permission) then
-                shell.run(data.prog, evType, data.ui or "", player or "")
-            end
-        end
-    end
-end
-
 local function handleRecurring()
      local players = tracking.getPlayerPositions(positionsRange)
      --Check if anyone of the players just left any of the colliders. If so, take appropiate action
@@ -142,7 +164,7 @@ local function handleRecurring()
             local vec = players[pl]
             if vec == nil or not collider.isInside(registeredColliders[colName], vec) then 
                 --TODO refine event
-                triggerEvent(colName, "deactivate", pl, vec)
+                triggerEvent(colName, "deactivate", pl)
                 table.remove(pArray, k)
             end
         end
@@ -156,7 +178,7 @@ local function handleRecurring()
             end
             if freshJoined and collider.isInside(col, ve) then
                 --TODO refine event
-                triggerEvent(colName, "activate", k, ve)
+                triggerEvent(colName, "activate", k)
                 if occupiedColliders[colName] == nil then
                     occupiedColliders[colName] = {}
                 end
@@ -185,7 +207,7 @@ while running == 1 do
     if event == "timer" and p1 == timer then
         local ok, err = pcall(handleRecurring)
         if not ok then
-            print("Error in handleRecurring() detected")
+            print("Error in handleRecurring() detected: "..err)
             errcount = errcount + 1
         else
             errcount = math.max(0, errcount - 1)
