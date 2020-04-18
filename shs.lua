@@ -174,15 +174,16 @@ local function handleCommand(sid, msg, ptc)
         end
         -- with auth, this could actually check permissions
         table.remove(msg, 1)
-        local arguments = {}
+        local arguments = ""
         local regC = registeredCommands[prog]
-        for i=2, i <= #regC do
-            table.insert(arguments, regC[i])
+        for i = 2, #regC do
+            arguments = arguments.." "..regC[i]
         end
-        for i=1, i <= #msg do
-            table.insert(arguments, msg[i])
+        arguments = arguments.." "
+        for i = 1, #msg do
+            arguments = arguments.." "..msg[i]
         end
-        if #arguments == 0 then
+        if arguments == "" then
             shell.run(prog)
         else
             shell.run(prog, arguments)
