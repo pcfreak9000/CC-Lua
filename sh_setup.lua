@@ -7,7 +7,7 @@ local registeredHandlers = {}
 --key=colName, value=collider
 local registeredColliders = {}
 
---key=prog, value={perm, ...}
+--key=com, value={alias, {prog, perm, args}}
 local registeredCommands = {}
 
 local function serialize(datafileprefix)
@@ -42,8 +42,8 @@ function registerCollider(name, coll)
     --serialize()
 end
 
-function registerCommand(com, perm, ...)
-    table.insert(arg, 1, perm)
-    registeredCommands[com] = arg
+local function registerCommand(alias, command, permi, ...)
+    local tab = {prog=command, perm=permi, args=arg}
+    registeredCommands[alias] = tab
     --serialize()
 end

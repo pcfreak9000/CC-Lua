@@ -31,7 +31,7 @@ local occupiedColliders = {}
 --key=colName, value={key=index, value={prog, ui, perm}}
 local registeredHandlers = {}
 
---key=com, value={perm, ...}
+--key=com, value={alias, {prog, perm, args}}
 local registeredCommands = {}
 
 local running = 1
@@ -70,9 +70,9 @@ local function registerCollider(name, coll)
     serialize()
 end
 
-local function registerCommand(com, perm, ...)
-    table.insert(arg, 1, perm)
-    registeredCommands[com] = arg
+local function registerCommand(alias, command, permi, ...)
+    local tab = {prog=command, perm=permi, args=arg}
+    registeredCommands[alias] = tab
     serialize()
 end
 
@@ -168,25 +168,26 @@ local function handleCommand(sid, msg, ptc)
         if #msg == 0 then
             return {code=2}
         end
-        local prog = msg[1]
-        if registeredCommands[prog] == nil then
+        local alias = msg[1]
+        if registeredCommands[alias] == nil then
             return {code=4}
         end
         -- with auth, this could actually check permissions
         table.remove(msg, 1)
+        local pData = registeredCommands[alias]
         local arguments = ""
-        local regC = registeredCommands[prog]
-        for i = 2, #regC do
-            arguments = arguments.." "..regC[i]
+        local aargs = pData.args
+        for i = 2, aargs do
+            arguments = arguments.." "..aargs[i]
         end
         arguments = arguments.." "
         for i = 1, #msg do
             arguments = arguments.." "..msg[i]
         end
         if arguments == "" then
-            shell.run(prog)
+            shell.run(pData.prog)
         else
-            shell.run(prog, arguments)
+            shell.run(pData.prog, arguments)
         end
         return {code=0}
     end
