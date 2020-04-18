@@ -82,6 +82,7 @@ local function triggerEvent(colName, evType, player)
         for i,data in pairs(handlers) do
             local permission = data.perm
             if permission == "" or permissions.hasPermission(player, permission) then
+                --TODO consider switching evType and data.ui?
                 shell.run(data.prog, evType, data.ui or "", player or "unknown")
             end
         end
@@ -89,7 +90,6 @@ local function triggerEvent(colName, evType, player)
 end
 
 local function handleCommand(sid, msg, ptc)
-    --TODO actions
     if msg[1] == "server" then
         table.remove(msg, 1)
         if #msg == 0 then
@@ -177,7 +177,7 @@ local function handleCommand(sid, msg, ptc)
         local pData = registeredCommands[alias]
         local arguments = ""
         local aargs = pData.args
-        for i = 2, aargs do
+        for i = 1, #aargs do
             arguments = arguments.." "..aargs[i]
         end
         arguments = arguments.." "

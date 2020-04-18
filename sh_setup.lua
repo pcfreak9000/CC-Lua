@@ -42,7 +42,7 @@ function registerCollider(name, coll)
     --serialize()
 end
 
-local function registerCommand(alias, command, permi, ...)
+function registerCommand(alias, command, permi, ...)
     local tab = {prog=command, perm=permi, args=arg}
     registeredCommands[alias] = tab
     --serialize()
