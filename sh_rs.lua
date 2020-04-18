@@ -1,10 +1,12 @@
 local rsside = "top"
 local rednetside = "front"
 local protocol = "sh-item"
+local rsDefault = false
 
-rednet.open(rednetside)
+rs.setOutput(rsside, rsDefault)
 ostate = 0
 state = 0
+rednet.open(rednetside)
 while true do
     if rednet.isOpen(rednetside) == false then
         rednet.open(rednetside)
@@ -21,11 +23,11 @@ while true do
     elseif msg == "orevoke" then
         ostate = 0
     end
-    local aa = false
+    local aa = rsDefault
     if ostate == 0 and state == 1 then
-        aa = true
+        aa = not rsDefault
     elseif ostate == 1 then
-        aa = true
+        aa = not rsDefault
     end
     rs.setOutput(rsside, aa)
 end
