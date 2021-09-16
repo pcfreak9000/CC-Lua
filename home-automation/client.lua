@@ -1,5 +1,7 @@
 os.loadAPI("cryptoNet")
 
+loggedIn = false
+promptingCmd = false
 
 function promptLogin(socket)
     print("Enter username: ")
@@ -12,19 +14,25 @@ function promptLogin(socket)
 end
 
 function promptCommand(socket)
+    if promptingCmd then
+        return
+    end
+    promptingCmd = true;
     print("Enter command: ")
     local cmd = read()
-    cryptoNet.send(socket, textutils.serialize({typ="command", cmd=cmd}))
+    promptingCmd = false
+    cryptoNet.send(socket, textutils.serialise({typ="command", cmd=cmd}))
 end
 
 function onStart()
 --    print("Enter server address: ")
 --    local addr = read()
+    print("Connecting...")
     local socket = cryptoNet.connect("pcfreak9000.de")
     promptLogin(socket)    
 end
 
-loggedIn = false
+
 
 function onEvent(event)
     if event[1] == "login_failed" then
@@ -41,7 +49,9 @@ function onEvent(event)
         promptLogin(event[3])
     elseif event[1] == "encrypted_message" then
         local table = textutils.unserialize(event[2])
-        if table.typ == "print" then
+        if table == nil then
+            
+        elseif table.typ == "print" then
             print(table.msg)
         elseif table.typ == "execute_lua" then
             loadstring(table.func)
@@ -56,6 +66,8 @@ function onEvent(event)
         print("Connection terminated.")
     elseif event[1] == "connection_opened" then
         print("Connection opened.")
+    elseif event[1] == "terminate" then
+        cryptoNet.close(event[3])
     end
 end
 
