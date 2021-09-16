@@ -30,15 +30,15 @@ function onEvent(event)
     if event[1] == "login_failed" then
         loggedIn = false
         print("Login failed. Try again:")
-        promptLogin(event.socket)
+        promptLogin(event[3])
     elseif event[1] == "login" then
         loggedIn = true
         print("Login successful.")
-        promptCommand(event.socket)
+        promptCommand(event[3])
     elseif event[1] == "logout" then
         loggedIn = false
         print("Logged out.")
-        promptLogin(event.socket)
+        promptLogin(event[3])
     elseif event[1] == "encrypted_message" then
         local table = textutils.unserialize(event[2])
         if table.typ == "print" then
@@ -49,7 +49,7 @@ function onEvent(event)
             print("Received message with unknown type: "..table.typ)
         end
         if loggedIn then
-            promptCommand(event.socket)
+            promptCommand(event[3])
         end
     elseif event[1] == "connection_closed" then
         loggedIn = false
