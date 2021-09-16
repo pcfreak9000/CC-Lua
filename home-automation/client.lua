@@ -21,7 +21,7 @@ function promptCommand(socket)
     print("Enter command: ")
     local cmd = read()
     promptingCmd = false
-    cryptoNet.send(socket, textutils.serialise({typ="command", cmd=cmd}))
+    cryptoNet.send(socket, {typ="command", cmd=cmd})
 end
 
 function onStart()
@@ -32,7 +32,21 @@ function onStart()
     promptLogin(socket)    
 end
 
-
+function handleMessage(socket, table)
+        if table.typ == nil then
+            print("Received an unknown message")
+        elseif table.typ == "prompt" then
+            if loggedIn then
+                promptCommand(event[3])
+            end
+        elseif table.typ == "print" then
+            print(table.msg)
+        elseif table.typ == "execute_lua" then
+            loadstring(table.func)
+        else
+            print("Received message with unknown type: "..table.typ)
+        end
+end
 
 function onEvent(event)
     if event[1] == "login_failed" then
@@ -48,19 +62,7 @@ function onEvent(event)
         print("Logged out.")
         promptLogin(event[3])
     elseif event[1] == "encrypted_message" then
-        local table = textutils.unserialize(event[2])
-        if table == nil then
-            
-        elseif table.typ == "print" then
-            print(table.msg)
-        elseif table.typ == "execute_lua" then
-            loadstring(table.func)
-        else
-            print("Received message with unknown type: "..table.typ)
-        end
-        if loggedIn then
-            promptCommand(event[3])
-        end
+        handleMessage(event[3], event[2])
     elseif event[1] == "connection_closed" then
         loggedIn = false
         print("Connection terminated.")
