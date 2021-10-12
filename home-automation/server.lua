@@ -10,6 +10,12 @@ function handleCommand(socket, cmd)
     -- check if any module has a cmd 
 end
 
+function sendError(socket, text)
+    local tosend = {typ="print", msg=text}
+    cryptoNet.send(socket, tosend)
+    cryptoNet.send(socket, {typ="prompt"}
+end
+
 function onStart()
     cryptoNet.host(serverAddress)
 end
@@ -21,16 +27,15 @@ function onEvent(event)
             local received = event[2]
             if received.typ ~= nil then
                 if received.typ == "command" then
-                    local ok = pcall(handleCommand, socket, received.cmd)
+                    local ok, errmsg = pcall(handleCommand, socket, received.cmd)
                     if not ok then
-                        local tosend = {typ="print", msg="500 Internal Server Error"}
-                        cryptoNet.send(socket, tosend)
+                        sendError(socket, "500 Internal Server Error")
+                        print("An error occured while handling a command: "..errmsg)
                     end
                 end
             else
                 -- a message without type information came in
-                local tosend = {typ="print", msg="400 Bad Request"}
-                cryptoNet.send(socket, tosend)
+                sendError(socket, "400 Bad request")
             end
         else
             -- the user isn't logged in
