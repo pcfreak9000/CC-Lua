@@ -37,7 +37,7 @@ function handleMessage(socket, table)
             print("Received an unknown message")
         elseif table.typ == "prompt" then
             if loggedIn then
-                promptCommand(event[3])
+                promptCommand(socket)
             end
         elseif table.typ == "print" then
             print(table.msg)

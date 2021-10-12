@@ -6,14 +6,17 @@ os.loadAPI("util")
 
 function handleCommand(socket, cmd)
     local cmdtab = util.splitArgs(cmd)
-    print(textutils.serialize(cmdtab))
+    for i=1, #cmdtab do 
+        print(i .. ": " .. cmdtab[i])
+    end
+    cryptoNet.send(socket, {typ="prompt"})
     -- check if any module has a cmd 
 end
 
 function sendError(socket, text)
     local tosend = {typ="print", msg=text}
     cryptoNet.send(socket, tosend)
-    cryptoNet.send(socket, {typ="prompt"}
+    cryptoNet.send(socket, {typ="prompt"})
 end
 
 function onStart()

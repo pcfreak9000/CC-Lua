@@ -66,7 +66,7 @@ function splitArgs(stringIn, sep)
     local t={}
     local temp = ""
     local intemp = false
-    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+    for str in string.gmatch(stringIn, "([^"..sep.."]+)") do
         if startsWith(str, "\"") then
             if not intemp then                
                 intemp = true
