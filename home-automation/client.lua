@@ -62,6 +62,7 @@ function onEvent(event)
         print("Logged out.")
         promptLogin(event[3])
     elseif event[1] == "encrypted_message" then
+        -- TODO check if the user is logged in?
         handleMessage(event[3], event[2])
     elseif event[1] == "connection_closed" then
         loggedIn = false

@@ -52,3 +52,36 @@ end
 function writeTableToFile(filename, table_)
 	writeAllToFile(filename, textutils.serialise(table_))
 end
+
+local function string.startsWith(str, start)
+   return str:sub(1, #start) == start
+end
+
+local function string.endsWith(str, ending)
+   return ending == "" or str:sub(-#ending) == ending
+end
+
+function splitArgs(stringIn, sep)
+    sep = sep or "%s"
+    local t={}
+    local temp = ""
+    local intemp = false
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+        if string.startsWith(str, "\"") then
+            if not intemp then                
+                intemp = true
+            end 
+        end
+        if intemp then
+            temp = temp..str
+            if string.endsWith(str, "\"") and not string.endsWith(str, "\\\"") then
+                intemp = false
+                table.insert(t, temp)
+                temp = ""
+            end
+        else
+            table.insert(t, str)
+        end
+    end
+    return t
+end
