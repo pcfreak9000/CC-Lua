@@ -1,8 +1,38 @@
+-- Configuration START
 local serverAddress = "pcfreak9000.de"
-local serverModuleNames = {}
+local serverModuleFiles = {}
+-- Configuration END
 
 os.loadAPI("cryptoNet")
 os.loadAPI("util")
+
+local modulesLoaded = {}
+local commandRunners = {}
+
+function loadModules()
+    print("Loading modules...")
+    for i,v in ipairs(serverModuleFiles) do
+        local ok, ret = pcall(dofile, v)
+        if ok then
+            table.insert(modulesLoaded, ret)
+            print("Loaded module '"..v.."'")
+        else
+            print("Could not load module '"..v.."'")
+        end
+    end
+    print("Loaded "..#modulesLoaded.." modules")
+end
+
+function setupModules()
+    for i,v in ipairs(modulesLoaded) do
+        local func = v.setup;
+        if func ~= nil then
+            func()
+        end 
+    end
+end
+
+-- Handling event stuff etc below
 
 function handleCommand(socket, cmd)
     local cmdtab = util.splitArgs(cmd)
@@ -18,6 +48,8 @@ function sendError(socket, text)
     cryptoNet.send(socket, tosend)
     cryptoNet.send(socket, {typ="prompt"})
 end
+
+-- Event stuff below
 
 function onStart()
     cryptoNet.host(serverAddress)
@@ -39,6 +71,7 @@ function onEvent(event)
             else
                 -- a message without type information came in
                 sendError(socket, "400 Bad request")
+                print("Received a message without type information")
             end
         else
             -- the user isn't logged in
@@ -48,7 +81,9 @@ function onEvent(event)
     end
 end
 
-
+loadModules()
+--setupCore()
+setupModules()
 cryptoNet.startEventLoop(onStart, onEvent)
 
 

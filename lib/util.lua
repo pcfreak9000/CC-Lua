@@ -61,27 +61,12 @@ local function endsWith(str, ending)
    return ending == "" or str:sub(-#ending) == ending
 end
 
+-- see older commits for some basic quoting functionality
 function splitArgs(stringIn, sep)
     sep = sep or "%s"
     local t={}
-    local temp = ""
-    local intemp = false
     for str in string.gmatch(stringIn, "([^"..sep.."]+)") do
-        if startsWith(str, "\"") then
-            if not intemp then                
-                intemp = true
-            end 
-        end
-        if intemp then
-            temp = temp..str
-            if endsWith(str, "\"") and not endsWith(str, "\\\"") then
-                intemp = false
-                table.insert(t, temp)
-                temp = ""
-            end
-        else
-            table.insert(t, str)
-        end
+        table.insert(t, str)
     end
     return t
 end
