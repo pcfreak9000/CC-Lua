@@ -1,0 +1,8 @@
+#!/bin/lua
+regex = '([^"][^%s]*|".+?[^\\\\]")[%s]*'
+test = 'Test "test \"test etst" test "test"'
+at = 'test'
+print(test:match('".+?[^%\\]"[%s]*'))
+for str in string.gmatch(test, regex) do
+    print(str)
+end
